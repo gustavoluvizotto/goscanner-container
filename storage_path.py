@@ -24,9 +24,11 @@ filename_scan_dict = {
     "jarm.csv": "jarm",
     "tls-keylog": "tls",
     "fingerprints.csv": "tls",
-    # other scan results
+    # ldap scan results
     "starttls_ldap.csv": "starttls_ldap",
     "ldap.csv": "ldap",
+    "ldap_root_dse.csv": "ldap_crawl",
+    "ldap_schema.csv": "ldap_crawl",
 }
 
 
