@@ -1,0 +1,10 @@
+shared_dir/log_*
+shared_dir/output_*
+shared_dir/config.conf
+credentials.py
+venv/*
+__pycache__/*
+.DS_Store
+shared_dir/output/*
+shared_dir/input/*.csv
+.idea/*

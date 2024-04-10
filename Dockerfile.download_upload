@@ -1,0 +1,17 @@
+FROM docker.io/python:3
+
+WORKDIR "/root"
+
+COPY requirements.txt /root
+RUN pip3 install -r /root/requirements.txt
+
+COPY credentials.py /root
+COPY config.py /root
+COPY objstore.py /root
+COPY storage_path.py /root
+COPY transfer_to_objstore.py /root
+COPY retrieve_allowlist.py /root
+COPY manager.py /root
+
+ENTRYPOINT ["/root/manager.py"]
+

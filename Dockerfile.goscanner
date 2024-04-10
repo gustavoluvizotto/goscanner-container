@@ -1,0 +1,16 @@
+FROM docker.io/golang:latest
+
+RUN apt-get update -y
+RUN apt-get install curl -y 
+
+RUN git clone https://github.com/gustavoluvizotto/goscanner-fork.git
+RUN cd goscanner-fork && git checkout ldaps-scanner && go install .
+
+RUN apt-get install python3-venv -y
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv ${VIRTUAL_ENV}
+ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
+# required by goscanner fingerprinting
+RUN pip install csvkit
+
+ENTRYPOINT [ "/go/bin/goscanner" ]
