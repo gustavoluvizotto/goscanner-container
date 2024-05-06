@@ -27,8 +27,8 @@ filename_scan_dict = {
     # ldap scan results
     "starttls_ldap.csv": "starttls_ldap",
     "ldap.csv": "ldap",
-    "ldap_root_dse.csv": "ldap_crawl",
-    "ldap_schema.csv": "ldap_crawl",
+    "ldap_root_dse.csv": "ldap_metadata",
+    "ldap_schema.csv": "ldap_metadata",
 }
 
 
