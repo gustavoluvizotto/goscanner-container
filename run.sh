@@ -3,12 +3,13 @@
 PORT=$1
 CH_NAME=$2
 declare -a SCAN_PARAM=()
-while (( "$#" )); do
-    shift  # ignoring the first argument (already assigned)
-    shift  # ignoring the second argument (already assigned)
-    if [ -n "$1" ]; then
+for arg in "$@"; do
+    if [[ "$arg" == "$PORT" ]] || [[ $arg == "$CH_NAME" ]]; then
+        # Skip the first two arguments
+        continue
+    else
         SCAN_PARAM+=("-r")
-        SCAN_PARAM+=("$1")
+        SCAN_PARAM+=("${arg}")
     fi
 done
 
