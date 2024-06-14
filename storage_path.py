@@ -29,6 +29,7 @@ filename_scan_dict = {
     "ldap.csv": "ldap",
     "ldap_root_dse.csv": "ldap_metadata",
     "ldap_schema.csv": "ldap_metadata",
+    "ldap_root_dse_raw.csv": "ldap_metadata",
 }
 
 
