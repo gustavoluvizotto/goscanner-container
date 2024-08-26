@@ -17,18 +17,19 @@ DAY=$(TZ=":UTC" date '+%d')
 
 SHARED_DIR="shared_dir"
 INPUT_DIR="${SHARED_DIR}/input"
-INPUT_LINK_NAME="input_link.txt"  # contains which input/allowlist was used for this scan
+INPUT_LINK_NAME="input_link_${PORT}_${TIMESTAMP}.txt"  # contains which input/allowlist was used for this scan
 INPUT_LINK="${INPUT_DIR}/${INPUT_LINK_NAME}"
 OUTPUT_DIR="${SHARED_DIR}/output"
 CONFIG_FILE_NAME="goscanner.conf"
+STORED_CONFIG_FILE_NAME="goscanner_${PORT}_${TIMESTAMP}.conf"
 CONFIG_FILE="${INPUT_DIR}/${CONFIG_FILE_NAME}"
-LOG_FILE_NAME="log_${TIMESTAMP}.json"
+LOG_FILE_NAME="log_${PORT}_${TIMESTAMP}.json"
 LOG_FILE="${SHARED_DIR}/${LOG_FILE_NAME}"
 ALIAS_NAME="goscanner-write"
 ARTEFACT_OBJSTORE_PATH="${ALIAS_NAME}/catrin/artefacts/tool=goscanner/year=${YEAR}/month=${MONTH}/day=${DAY}"
 TIME_FILE_NAME="time_${PORT}_${TIMESTAMP}.txt"
 TIME_OUTPUT="${SHARED_DIR}/${TIME_FILE_NAME}"
-SCAN_ERROR_NAME="error_${TIMESTAMP}.txt"
+SCAN_ERROR_NAME="error_${PORT}_${TIMESTAMP}.txt"
 SCAN_ERROR="${SHARED_DIR}/${SCAN_ERROR_NAME}"
 
 # should we need it
@@ -65,7 +66,7 @@ podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm gos
 #podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
 mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
 #podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc cp "${CONFIG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${CONFIG_FILE_NAME}"
-mc cp "${CONFIG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${CONFIG_FILE_NAME}"
+mc cp "${CONFIG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${STORED_CONFIG_FILE_NAME}"
 echo "${INPUT_FILE}" > "${INPUT_LINK}"
 #podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc mv "${INPUT_LINK}" "${ARTEFACT_OBJSTORE_PATH}"/"${INPUT_LINK_NAME}"
 mc mv "${INPUT_LINK}" "${ARTEFACT_OBJSTORE_PATH}"/"${INPUT_LINK_NAME}"
