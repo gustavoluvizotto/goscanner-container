@@ -25,12 +25,12 @@ STORED_CONFIG_FILE_NAME="goscanner_${PORT}_${TIMESTAMP}.conf"
 CONFIG_FILE="${INPUT_DIR}/${CONFIG_FILE_NAME}"
 LOG_FILE_NAME="log_${PORT}_${TIMESTAMP}.json"
 LOG_FILE="${SHARED_DIR}/${LOG_FILE_NAME}"
-ALIAS_NAME="goscanner-write"
-ARTEFACT_OBJSTORE_PATH="${ALIAS_NAME}/catrin/artefacts/tool=goscanner/year=${YEAR}/month=${MONTH}/day=${DAY}"
 TIME_FILE_NAME="time_${PORT}_${TIMESTAMP}.txt"
 TIME_OUTPUT="${SHARED_DIR}/${TIME_FILE_NAME}"
 SCAN_ERROR_NAME="error_${PORT}_${TIMESTAMP}.txt"
 SCAN_ERROR="${SHARED_DIR}/${SCAN_ERROR_NAME}"
+ALIAS_NAME="goscanner-write"
+ARTEFACT_OBJSTORE_PATH="${ALIAS_NAME}/catrin/artefacts/tool=goscanner/port=${PORT}/year=${YEAR}/month=${MONTH}/day=${DAY}"
 
 # should we need it
 echo "Cleaning..."
@@ -64,6 +64,8 @@ fi
 echo "Uploading scan data..."
 podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm goscanner-file-manager --upload --port "${PORT}" --output-scan-dir "${OUTPUT_DIR}"
 #podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
+
+echo "Uploading artefacts..."
 mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
 #podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc cp "${CONFIG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${CONFIG_FILE_NAME}"
 mc cp "${CONFIG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${STORED_CONFIG_FILE_NAME}"
