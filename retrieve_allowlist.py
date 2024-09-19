@@ -36,11 +36,15 @@ def retrieve_allowlist(timestamp: str, port: int) -> None:
 
 
 def _get_latest_measurement(timestamp, zmap_measurements):
+    # zmap_measurements list has to be sorted!
     found_file = None
     for meas_path in zmap_measurements:
         filename = os.path.basename(meas_path)
         actual_date_str = os.path.splitext(filename)[0].split("_")[-1]
         dat_file_date = datetime.strptime(actual_date_str, "%Y%m%d%H%M%S")
+        # discard hours, minutes and seconds to have a fair comparison
+        dat_file_date = dat_file_date.replace(hour=0, minute=0, second=0)
+
         desired_date = datetime.strptime(timestamp, "%Y%m%d")
         if dat_file_date <= desired_date:
             found_file = meas_path
