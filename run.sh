@@ -38,7 +38,7 @@ rm -rf "${OUTPUT_DIR}"
 rm -f "${INPUT_DIR}"/*.csv
 
 echo "Retrieve allowlist..."
-podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm goscanner-file-manager --download --timestamp "${YEAR}${MONTH}${DAY}" --port "${PORT}"
+docker run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm goscanner-file-manager --download --timestamp "${YEAR}${MONTH}${DAY}" --port "${PORT}"
 # prepare allowlist to include port number
 INPUT_FILE=$(ls "${INPUT_DIR}"/*.csv)
 tail -n +2 "${INPUT_FILE}" > "${INPUT_FILE}.tmp" && mv "${INPUT_FILE}.tmp" "${INPUT_FILE}"
@@ -46,7 +46,7 @@ sed -e "s/$/:${PORT}/" -i "${INPUT_FILE}"
 
 echo "Scanning..."
 { time \
-    podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/go/${SHARED_DIR} --rm --name goscanner goscanner -C "${CONFIG_FILE}" "${SCAN_PARAM[@]}" -i "${INPUT_FILE}" -l "${LOG_FILE}" 2> "${SCAN_ERROR}";
+    docker run --network=host -v "$(pwd)"/${SHARED_DIR}:/go/${SHARED_DIR} --rm --name goscanner goscanner -C "${CONFIG_FILE}" "${SCAN_PARAM[@]}" -i "${INPUT_FILE}" -l "${LOG_FILE}" 2> "${SCAN_ERROR}";
 } 2> "${TIME_OUTPUT}"
 ret=$?
 if [ $ret != 0 ]; then
@@ -58,12 +58,12 @@ if [ $ret != 0 ]; then
          Error: ${E}. Time: ${T}"
     SUBJECT="Goscanner scan error at ${TIMESTAMP}"
     RECIPIENT="scan-notification@internet-transparency.org"
-    podman run --rm mail bash -c "echo '${BODY}' | mutt -s '${SUBJECT}' ${RECIPIENT}"
+    docker run --rm mail bash -c "echo '${BODY}' | mutt -s '${SUBJECT}' ${RECIPIENT}"
 fi
 
 echo "Uploading scan data..."
-podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm goscanner-file-manager --upload --port "${PORT}" --output-scan-dir "${OUTPUT_DIR}"
-#podman run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
+docker run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm goscanner-file-manager --upload --port "${PORT}" --output-scan-dir "${OUTPUT_DIR}"
+#docker run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm  mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
 
 echo "Uploading artefacts..."
 mc mv "${LOG_FILE}" "${ARTEFACT_OBJSTORE_PATH}"/"${LOG_FILE_NAME}"
