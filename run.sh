@@ -2,13 +2,20 @@
 
 PORT=$1
 declare -a SCAN_PARAM=()
+IS_HTTP=false
 while (( "$#" )); do
     shift  # ignoring the first argument (already assigned)
     if [ -n "$1" ]; then
         SCAN_PARAM+=("-r")
         SCAN_PARAM+=("$1")
     fi
+    if [[ "$1" == "http" ]]; then
+        IS_HTTP=true
+    fi
 done
+if [ "${IS_HTTP}" = true ]; then
+    SCAN_PARAM+=("--http-extended-output")
+fi
 
 TIMESTAMP=$(TZ=":UTC" date '+%Y%m%d%H%M%S')
 YEAR=$(TZ=":UTC" date '+%Y')
