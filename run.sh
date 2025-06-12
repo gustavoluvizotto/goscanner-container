@@ -44,7 +44,7 @@ USER=$(id -u)
 echo "Cleaning..."
 rm -rf "${OUTPUT_DIR}"
 # docker creates everything under root user. Hence, we must clean output_dir as root user
-docker run --rm -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} alpine rm -rf /root/shared_dir/output
+docker run --rm -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} alpine rm -rf /root/"${OUTPUT_DIR}"
 rm -f "${INPUT_DIR}"/*.csv
 
 echo "Retrieve allowlist..."
