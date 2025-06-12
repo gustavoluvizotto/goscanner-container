@@ -38,22 +38,25 @@ SCAN_ERROR_NAME="error_${PORT}_${TIMESTAMP}.txt"
 SCAN_ERROR="${SHARED_DIR}/${SCAN_ERROR_NAME}"
 ALIAS_NAME="goscanner-write"
 ARTEFACT_OBJSTORE_PATH="${ALIAS_NAME}/catrin/artefacts/tool=goscanner/port=${PORT}/year=${YEAR}/month=${MONTH}/day=${DAY}"
+USER=$(id -u)
 
 # should we need it
 echo "Cleaning..."
 rm -rf "${OUTPUT_DIR}"
+# docker creates everything under root user. Hence, we must clean output_dir as root user
+docker run --rm -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} alpine rm -rf /root/shared_dir/output
 rm -f "${INPUT_DIR}"/*.csv
 
 echo "Retrieve allowlist..."
 docker run --network=host -v "$(pwd)"/${SHARED_DIR}:/root/${SHARED_DIR} --rm goscanner-file-manager --download --timestamp "${YEAR}${MONTH}${DAY}" --port "${PORT}"
 # prepare allowlist to include port number
 INPUT_FILE=$(ls "${INPUT_DIR}"/*.csv)
-tail -n +2 "${INPUT_FILE}" > "${INPUT_FILE}.tmp" && mv "${INPUT_FILE}.tmp" "${INPUT_FILE}"
+tail -n +2 "${INPUT_FILE}" > "${INPUT_FILE}.tmp" && mv -f "${INPUT_FILE}.tmp" "${INPUT_FILE}"
 sed -e "s/$/:${PORT}/" -i "${INPUT_FILE}"
 
 echo "Scanning..."
 { time \
-    docker run --network=host -v "$(pwd)"/${SHARED_DIR}:/go/${SHARED_DIR} --rm --name goscanner goscanner -C "${CONFIG_FILE}" "${SCAN_PARAM[@]}" -i "${INPUT_FILE}" -l "${LOG_FILE}" 2> "${SCAN_ERROR}";
+    docker run --user "${USER}" --network=host -v "$(pwd)"/${SHARED_DIR}:/go/${SHARED_DIR} --rm --name goscanner goscanner -C "${CONFIG_FILE}" "${SCAN_PARAM[@]}" -i "${INPUT_FILE}" -l "${LOG_FILE}" 2> "${SCAN_ERROR}";
 } 2> "${TIME_OUTPUT}"
 ret=$?
 if [ $ret != 0 ]; then
